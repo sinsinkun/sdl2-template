@@ -1,51 +1,48 @@
 #include <iostream>
+#include <vector>
 #include <SDL2/SDL.h>
-// #include <GL/gl.h>
-// #include <GL/glu.h>
+#include <SDL2/SDL_opengl.h>
+#include <GL/gl.h>
 #include "app.h"
+
+typedef int32_t i32;
+typedef uint32_t u32;
+typedef int32_t b32;
 
 using namespace Global;
 
 /// @brief Start SDL window instance
 void App::init() {
-  int renderFlags, windowFlags;
-  renderFlags = SDL_RENDERER_ACCELERATED;
-  windowFlags = SDL_WINDOW_RESIZABLE; // SDL_WINDOW_OPENGL;
+  // int renderFlags, windowFlags;
+  // renderFlags = SDL_RENDERER_ACCELERATED;
+  int windowFlags = SDL_WINDOW_RESIZABLE | SDL_WINDOW_OPENGL;
 
   if (SDL_Init(SDL_INIT_VIDEO) < 0) {
     std::cout << "Could not initialize SDL: " << SDL_GetError() << std::endl;
     exit(1);
   }
 
-  // OpenGL setup
-  // SDL_GL_SetAttribute( SDL_GL_RED_SIZE, 5);
-  // SDL_GL_SetAttribute( SDL_GL_GREEN_SIZE, 5);
-  // SDL_GL_SetAttribute( SDL_GL_BLUE_SIZE, 5);
-  // SDL_GL_SetAttribute( SDL_GL_DEPTH_SIZE, 16);
-  // SDL_GL_SetAttribute( SDL_GL_DOUBLEBUFFER, 1);
-
-  window = SDL_CreateWindow(
-    "Game Window",
-    SDL_WINDOWPOS_UNDEFINED,
-    SDL_WINDOWPOS_UNDEFINED,
-    WIN_W,
-    WIN_H,
-    windowFlags
-  );
+  window = SDL_CreateWindow("Game Window", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, WIN_W, WIN_H, windowFlags);
   if (!window) {
     std::cout << "Failed to open window" << SDL_GetError() << std::endl;
     exit(1);
   }
-
   SDL_SetWindowMinimumSize(window, WIN_MIN_W, WIN_MIN_H);
   SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "linear");
-  renderer = SDL_CreateRenderer(window, -1, renderFlags);
-  // SDL_GLContext context = SDL_GL_CreateContext(app.window);
+  
+  // OpenGL setup
+  SDL_GL_SetAttribute( SDL_GL_RED_SIZE, 5);
+  SDL_GL_SetAttribute( SDL_GL_GREEN_SIZE, 5);
+  SDL_GL_SetAttribute( SDL_GL_BLUE_SIZE, 5);
+  SDL_GL_SetAttribute( SDL_GL_DEPTH_SIZE, 16);
+  SDL_GL_SetAttribute( SDL_GL_DOUBLEBUFFER, 1);
+  SDL_GLContext context = SDL_GL_CreateContext(window);
 
-  if (!renderer) {
-    std::cout << "Failed to create renderer" << SDL_GetError() << std::endl;
-    exit(1);
-  }
+  // renderer = SDL_CreateRenderer(window, -1, renderFlags);
+  // if (!renderer) {
+  //   std::cout << "Failed to create renderer" << SDL_GetError() << std::endl;
+  //   exit(1);
+  // }
 }
 
 /// @brief Update app state
@@ -56,15 +53,15 @@ void App::update() {
 
 /// @brief Draw to window
 void App::render() {
-  // -- clear old render --
-  SDL_SetRenderDrawColor(renderer, bgColor[0], bgColor[1], bgColor[2], 255);
-  SDL_RenderClear(renderer);
-  // -- create new render --
-  SDL_Rect fill = { winSize[0]/2 - 25, winSize[1]/2 - 25, 50, 50};
-  SDL_SetRenderDrawColor(renderer, 200, 200, 255, 255);
-  SDL_RenderFillRect(renderer, &fill);
-  // -- draw new render --
-  SDL_RenderPresent(renderer);
+  // -- clear front buffer --
+  glViewport(0, 0, winSize[0], winSize[1]);
+  glClearColor(0.1f, 0.1f, 0.1f, 1.f);
+  glClear(GL_COLOR_BUFFER_BIT);
+
+  // -- update back buffer --
+
+  // -- swap front and back --
+  SDL_GL_SwapWindow(window);
 }
 
 #pragma region Input_Handling
