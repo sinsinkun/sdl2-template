@@ -6,19 +6,27 @@
 #define WIDTH 800
 #define HEIGHT 600
 
-struct App {
+class App {
   public:
+    // SDL stuff
     SDL_Renderer* renderer;
     SDL_Window* window;
     // custom global states
     Uint8 bgColor[3] = {10, 10, 50};
-} app;
+    // systems
+    void init();
+    void clearRender();
+    void update();
+    void handleKeyboardEvent(SDL_KeyboardEvent& key);
+    void handleWindowEvent(SDL_WindowEvent& win);
+    void render();
+};
 
 /// @brief Start SDL window instance
-void initSDL() {
+void App::init() {
   int renderFlags, windowFlags;
   renderFlags = SDL_RENDERER_ACCELERATED;
-  windowFlags = 0; // SDL_WINDOW_OPENGL;
+  windowFlags = SDL_WINDOW_RESIZABLE; // SDL_WINDOW_OPENGL;
 
   if (SDL_Init(SDL_INIT_VIDEO) < 0) {
     std::cout << "Could not initialize SDL: " << SDL_GetError() << std::endl;
@@ -32,7 +40,7 @@ void initSDL() {
   // SDL_GL_SetAttribute( SDL_GL_DEPTH_SIZE, 16);
   // SDL_GL_SetAttribute( SDL_GL_DOUBLEBUFFER, 1);
 
-  app.window = SDL_CreateWindow(
+  window = SDL_CreateWindow(
     "Game Window",
     SDL_WINDOWPOS_UNDEFINED,
     SDL_WINDOWPOS_UNDEFINED,
@@ -40,36 +48,39 @@ void initSDL() {
     HEIGHT,
     windowFlags
   );
-
-  if (!app.window) {
+  if (!window) {
     std::cout << "Failed to open window" << SDL_GetError() << std::endl;
     exit(1);
   }
 
   SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "linear");
-  app.renderer = SDL_CreateRenderer(app.window, -1, renderFlags);
+  renderer = SDL_CreateRenderer(window, -1, renderFlags);
   // SDL_GLContext context = SDL_GL_CreateContext(app.window);
 
-  if (!app.renderer) {
+  if (!renderer) {
     std::cout << "Failed to create renderer" << SDL_GetError() << std::endl;
     exit(1);
   }
 }
 
 /// @brief Reset render space
-void clearRender() {
-  SDL_SetRenderDrawColor(app.renderer, app.bgColor[0], app.bgColor[1], app.bgColor[2], 255);
-  SDL_RenderClear(app.renderer);
+void App::clearRender() {
+  SDL_SetRenderDrawColor(renderer, bgColor[0], bgColor[1], bgColor[2], 255);
+  SDL_RenderClear(renderer);
 }
 
 /// @brief Accept inputs
-void takeInput() {
+void App::update() {
   SDL_Event event;
   
   while (SDL_PollEvent(&event)) {
     switch (event.type) {
       case SDL_KEYDOWN:
-        std::cout << "Pressed key: " << SDL_GetKeyName(event.key.keysym.sym) << std::endl;
+      case SDL_KEYUP:
+        handleKeyboardEvent(event.key);
+        break;
+      case SDL_WINDOWEVENT:
+        handleWindowEvent(event.window);
         break;
       case SDL_QUIT:
         exit(0);
@@ -80,9 +91,47 @@ void takeInput() {
   }
 }
 
+/// @brief Handle keyboard inputs
+/// @param key
+void App::handleKeyboardEvent(SDL_KeyboardEvent& key) {
+  if (key.type == SDL_KEYDOWN && !key.repeat) {
+    switch (key.keysym.sym) {
+      case SDLK_ESCAPE:
+        // do nothing
+        break;
+      default:
+        std::cout << "Pressed key: " << SDL_GetKeyName(key.keysym.sym) << std::endl;
+        break;
+    }
+  } else if (key.type == SDL_KEYUP) {
+    switch (key.keysym.sym) {
+      case SDLK_ESCAPE:
+        exit(0);
+        break;
+      default:
+        std::cout << "Let go of key: " << SDL_GetKeyName(key.keysym.sym) << std::endl;
+        break;
+    }
+  }
+}
+
+/// @brief Handle window events
+/// @param win 
+void App::handleWindowEvent(SDL_WindowEvent& win) {
+  switch (win.event) {
+    // case SDL_WINDOWEVENT_RESIZED: <-- happens after size_changed event
+    case SDL_WINDOWEVENT_SIZE_CHANGED:
+      break;
+    case SDL_WINDOWEVENT_HIDDEN:
+    case SDL_WINDOWEVENT_SHOWN:
+    default:
+      break;
+  }
+}
+
 /// @brief Draw to window
-void render() {
-  SDL_RenderPresent(app.renderer);
+void App::render() {
+  SDL_RenderPresent(renderer);
 }
 
 /// @brief Entry point
@@ -90,13 +139,15 @@ void render() {
 /// @param argv input arguments array
 /// @return return value
 int main(int argc, char* argv[]) {
-  initSDL();
+  // declare new app
+  App app;
+  app.init();
 
   // event loop
   while (true) {
-    clearRender();
-    takeInput();
-    render();
+    app.clearRender();
+    app.update();
+    app.render();
     SDL_Delay(16); // artificial delay
   }
 
