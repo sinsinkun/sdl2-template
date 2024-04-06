@@ -1,5 +1,7 @@
 #include <iostream>
 #include <SDL2/SDL.h>
+// #include <GL/gl.h>
+// #include <GL/glu.h>
 
 #define WIDTH 800
 #define HEIGHT 600
@@ -16,7 +18,7 @@ struct App {
 void initSDL() {
   int renderFlags, windowFlags;
   renderFlags = SDL_RENDERER_ACCELERATED;
-  windowFlags = SDL_WINDOW_OPENGL;
+  windowFlags = 0; // SDL_WINDOW_OPENGL;
 
   if (SDL_Init(SDL_INIT_VIDEO) < 0) {
     std::cout << "Could not initialize SDL: " << SDL_GetError() << std::endl;
@@ -24,11 +26,11 @@ void initSDL() {
   }
 
   // OpenGL setup
-  SDL_GL_SetAttribute( SDL_GL_RED_SIZE, 5);
-  SDL_GL_SetAttribute( SDL_GL_GREEN_SIZE, 5);
-  SDL_GL_SetAttribute( SDL_GL_BLUE_SIZE, 5);
-  SDL_GL_SetAttribute( SDL_GL_DEPTH_SIZE, 16);
-  SDL_GL_SetAttribute( SDL_GL_DOUBLEBUFFER, 1);
+  // SDL_GL_SetAttribute( SDL_GL_RED_SIZE, 5);
+  // SDL_GL_SetAttribute( SDL_GL_GREEN_SIZE, 5);
+  // SDL_GL_SetAttribute( SDL_GL_BLUE_SIZE, 5);
+  // SDL_GL_SetAttribute( SDL_GL_DEPTH_SIZE, 16);
+  // SDL_GL_SetAttribute( SDL_GL_DOUBLEBUFFER, 1);
 
   app.window = SDL_CreateWindow(
     "Game Window",
@@ -46,7 +48,7 @@ void initSDL() {
 
   SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "linear");
   app.renderer = SDL_CreateRenderer(app.window, -1, renderFlags);
-  SDL_GLContext context = SDL_GL_CreateContext(app.window);
+  // SDL_GLContext context = SDL_GL_CreateContext(app.window);
 
   if (!app.renderer) {
     std::cout << "Failed to create renderer" << SDL_GetError() << std::endl;
@@ -88,7 +90,6 @@ void render() {
 /// @param argv input arguments array
 /// @return return value
 int main(int argc, char* argv[]) {
-  std::cout << "Hello world" << std::endl;
   initSDL();
 
   // event loop
