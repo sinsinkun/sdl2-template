@@ -22,7 +22,7 @@ void App::init() {
     exit(1);
   }
 
-  window = SDL_CreateWindow("Game Window", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, WIN_W, WIN_H, windowFlags);
+  window = SDL_CreateWindow("Test Window", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, WIN_W, WIN_H, windowFlags);
   if (!window) {
     std::cout << "Failed to open window" << SDL_GetError() << std::endl;
     exit(1);
@@ -31,12 +31,16 @@ void App::init() {
   SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "linear");
   
   // OpenGL setup
-  SDL_GL_SetAttribute( SDL_GL_RED_SIZE, 5);
-  SDL_GL_SetAttribute( SDL_GL_GREEN_SIZE, 5);
-  SDL_GL_SetAttribute( SDL_GL_BLUE_SIZE, 5);
+  SDL_GL_SetAttribute( SDL_GL_RED_SIZE, 8);
+  SDL_GL_SetAttribute( SDL_GL_GREEN_SIZE, 8);
+  SDL_GL_SetAttribute( SDL_GL_BLUE_SIZE, 8);
   SDL_GL_SetAttribute( SDL_GL_DEPTH_SIZE, 16);
   SDL_GL_SetAttribute( SDL_GL_DOUBLEBUFFER, 1);
   SDL_GLContext context = SDL_GL_CreateContext(window);
+  if (!context) {
+    std::cout << "Failed to create OpenGL context" << SDL_GetError() << std::endl;
+    exit(1);
+  }
 
   // renderer = SDL_CreateRenderer(window, -1, renderFlags);
   // if (!renderer) {
@@ -55,10 +59,17 @@ void App::update() {
 void App::render() {
   // -- clear front buffer --
   glViewport(0, 0, winSize[0], winSize[1]);
-  glClearColor(0.1f, 0.1f, 0.1f, 1.f);
+  glClearColor(0.3f, 0.3f, 0.3f, 1.f);
   glClear(GL_COLOR_BUFFER_BIT);
 
   // -- update back buffer --
+  // draw triangle (boundaries are -1.0 to 1.0)
+  glBegin(GL_TRIANGLES);
+    glColor3f(0.8, 0.5, 0.2);
+    glVertex3f(-1.0, -1.0, 1.0);
+    glVertex3f(-1.0, 1.0, 1.0);
+    glVertex3f(1.0, 1.0, 1.0);
+  glEnd();
 
   // -- swap front and back --
   SDL_GL_SwapWindow(window);
