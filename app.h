@@ -25,8 +25,8 @@ namespace Global {
       // internal input handlers
       void _handleInputs();
       void _handleKeyboardEvent(SDL_KeyboardEvent& key);
-      void _handleWindowEvent(SDL_WindowEvent& win);
       void _handleMouseMove(SDL_MouseMotionEvent& move);
       void _handleMouseButton(SDL_MouseButtonEvent& mouse);
+      void _handleWindowEvent(SDL_WindowEvent& win);
   };
 }

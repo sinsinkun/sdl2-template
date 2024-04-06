@@ -121,22 +121,6 @@ void App::_handleKeyboardEvent(SDL_KeyboardEvent& key) {
   }
 }
 
-/// @brief Handle window events
-/// @param win 
-void App::_handleWindowEvent(SDL_WindowEvent& win) {
-  switch (win.event) {
-    // case SDL_WINDOWEVENT_RESIZED: <-- happens after size_changed event
-    case SDL_WINDOWEVENT_SIZE_CHANGED:
-      winSize[0] = win.data1;
-      winSize[1] = win.data2;
-      break;
-    case SDL_WINDOWEVENT_HIDDEN:
-    case SDL_WINDOWEVENT_SHOWN:
-    default:
-      break;
-  }
-}
-
 /// @brief Handle mouse button clicks
 /// @param mouse 
 void App::_handleMouseButton(SDL_MouseButtonEvent& mouse) {
@@ -171,5 +155,21 @@ void App::_handleMouseButton(SDL_MouseButtonEvent& mouse) {
 void App::_handleMouseMove(SDL_MouseMotionEvent& move) {
   mousePos[0] = move.x;
   mousePos[1] = move.y;
+}
+
+/// @brief Handle window events
+/// @param win 
+void App::_handleWindowEvent(SDL_WindowEvent& win) {
+  switch (win.event) {
+    // case SDL_WINDOWEVENT_RESIZED: <-- happens after size_changed event
+    case SDL_WINDOWEVENT_SIZE_CHANGED:
+      winSize[0] = win.data1;
+      winSize[1] = win.data2;
+      break;
+    case SDL_WINDOWEVENT_HIDDEN:
+    case SDL_WINDOWEVENT_SHOWN:
+    default:
+      break;
+  }
 }
 #pragma endregion Input_Handling
