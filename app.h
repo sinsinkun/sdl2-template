@@ -1,6 +1,7 @@
 #pragma once
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
+#include "UI/button.h"
 
 namespace Global {
   // -- Constants --
@@ -18,19 +19,22 @@ namespace Global {
       // custom global states
       Uint8 bgColor[3] = {20, 20, 30};
       Sint32 mousePos[2] = {0, 0};
+      bool mouseClicking = false;
       Sint32 winSize[2] = {WIN_W, WIN_H};
       bool winFocus = true;
       Uint32 deltaTime = 0; // in ms
       Uint32 elapsedTime = 0; // in ms
       float fps = 0;
+      // asset preload
+      Button* btn1 = new Button{ 1 };
       // systems
       void init();
       void update();
       void render();
       void cleanup();
-      void renderText(const char* text, int x, int y, SDL_Color color);
     private:
       // internal timer helper
+      Uint8 _fpsSkip = 0;
       Uint32 _alphaTime = 0;
       void _updateTime();
       // internal input handlers

@@ -5,6 +5,7 @@
 #include <SDL2/SDL_ttf.h>
 #include "app.h"
 #include "util.h"
+#include "UI/button.h"
 
 using namespace Global;
 
@@ -49,7 +50,11 @@ void App::init() {
   // TTF_SetFontOutline(font, 0);
   // TTF_SetFontKerning(font, 0);
   // TTF_SetFontHinting(font, 0);
-
+  btn1->size[0] = 90;
+  btn1->size[1] = 40;
+  btn1->text = "Button 1";
+  TTF_Font* btnFont = TTF_OpenFont("assets/retro_computer.ttf", 11);
+  btn1->font = btnFont;
 }
 
 /// @brief Destroy resources on exit
@@ -65,6 +70,9 @@ void App::update() {
   _handleInputs();
   _updateTime();
   // TODO: logic updates
+  btn1->update(mousePos, mouseClicking);
+  btn1->pos[0] = 10;
+  btn1->pos[1] = winSize[1] - btn1->size[1] - 10;
 }
 
 /// @brief Draw to window
@@ -95,31 +103,21 @@ void App::render() {
   const int order[] = {0,1,2,0,2,3};
   SDL_RenderGeometry(renderer, nullptr, verts.data(), verts.size(), order, 6);
 
+  // draw button
+  btn1->render(renderer);
+
   // render FPS
   Uint8 g = SDL_clamp(fps * 4 - 20, 0, 255);
   Uint8 r = 255 - g;
-  std::string fpsStr = Util::floatToString(fps);
+  std::string fpsStr = Util::floatToString(fps, 0);
   std::string fpsTxt = "FPS: ";
   fpsTxt.append(fpsStr);
   const char* str = fpsTxt.c_str();
   const SDL_Color fpsColor = {r, g, 80};
-  renderText(str, 10, 10, fpsColor);
+  Util::renderText(renderer, font, str, 10, 10, fpsColor);
 
   // -- draw new render --
   SDL_RenderPresent(renderer);
-}
-
-/// @brief Helper function for rendering text with SDL2_ttf
-/// @param text char array for text
-/// @param x top left pos.x
-/// @param y top left pos.y
-void App::renderText(const char* text, int x, int y, SDL_Color color) {
-  SDL_Surface* ttfSurface = TTF_RenderText_Solid(font, text, color);
-  SDL_Texture* ttfTexture = SDL_CreateTextureFromSurface(renderer, ttfSurface);
-  int ttfW = 0, ttfH = 0;
-  SDL_QueryTexture(ttfTexture, nullptr, nullptr, &ttfW, &ttfH);
-  SDL_Rect dstrect = {x, y, ttfW, ttfH};
-  SDL_RenderCopy(renderer, ttfTexture, nullptr, &dstrect);
 }
 
 /// @brief Update timers per frame
@@ -128,7 +126,12 @@ void App::_updateTime() {
   _alphaTime = SDL_GetPerformanceCounter();
   deltaTime = (_alphaTime - prevTime) * 1000 / SDL_GetPerformanceFrequency();
   elapsedTime += deltaTime;
-  fps = 1000 / deltaTime;
+  if (_fpsSkip < 10) { // calculate fps at 10% speed
+    _fpsSkip++;
+  } else {
+    fps = 1000 / deltaTime;
+    _fpsSkip = 0;
+  }
 }
 
 #pragma region Input_Handling
@@ -191,7 +194,7 @@ void App::_handleMouseButton(SDL_MouseButtonEvent& mouse) {
   if (mouse.type == SDL_MOUSEBUTTONDOWN) {
     switch (mouse.button) {
       case SDL_BUTTON_LEFT:
-        std::cout << "Pressed LMB at (" << mousePos[0] << "," << mousePos[1] << ")" << std::endl;
+        mouseClicking = true;
         break;
       case SDL_BUTTON_RIGHT:
         std::cout << "Pressed RMB" << std::endl;
@@ -210,7 +213,7 @@ void App::_handleMouseButton(SDL_MouseButtonEvent& mouse) {
     }
   }
   else if (mouse.type == SDL_MOUSEBUTTONUP) {
-    std::cout << "MB released" << std::endl;
+    mouseClicking = false;
   }
 }
 
