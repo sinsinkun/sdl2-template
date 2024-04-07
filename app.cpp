@@ -1,7 +1,7 @@
 #include <iostream>
+#include <vector>
+#include <math.h>
 #include <SDL2/SDL.h>
-// #include <GL/gl.h>
-// #include <GL/glu.h>
 #include "app.h"
 
 using namespace Global;
@@ -10,28 +10,15 @@ using namespace Global;
 void App::init() {
   int renderFlags, windowFlags;
   renderFlags = SDL_RENDERER_ACCELERATED;
-  windowFlags = SDL_WINDOW_RESIZABLE; // SDL_WINDOW_OPENGL;
+  windowFlags = SDL_WINDOW_RESIZABLE;
 
   if (SDL_Init(SDL_INIT_VIDEO) < 0) {
     std::cout << "Could not initialize SDL: " << SDL_GetError() << std::endl;
     exit(1);
   }
 
-  // OpenGL setup
-  // SDL_GL_SetAttribute( SDL_GL_RED_SIZE, 5);
-  // SDL_GL_SetAttribute( SDL_GL_GREEN_SIZE, 5);
-  // SDL_GL_SetAttribute( SDL_GL_BLUE_SIZE, 5);
-  // SDL_GL_SetAttribute( SDL_GL_DEPTH_SIZE, 16);
-  // SDL_GL_SetAttribute( SDL_GL_DOUBLEBUFFER, 1);
-
-  window = SDL_CreateWindow(
-    "Game Window",
-    SDL_WINDOWPOS_UNDEFINED,
-    SDL_WINDOWPOS_UNDEFINED,
-    WIN_W,
-    WIN_H,
-    windowFlags
-  );
+  // initialize window
+  window = SDL_CreateWindow("SDL2 Window", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, WIN_W, WIN_H, windowFlags);
   if (!window) {
     std::cout << "Failed to open window" << SDL_GetError() << std::endl;
     exit(1);
@@ -39,9 +26,9 @@ void App::init() {
 
   SDL_SetWindowMinimumSize(window, WIN_MIN_W, WIN_MIN_H);
   SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "linear");
-  renderer = SDL_CreateRenderer(window, -1, renderFlags);
-  // SDL_GLContext context = SDL_GL_CreateContext(app.window);
 
+  // initialize renderer
+  renderer = SDL_CreateRenderer(window, -1, renderFlags);
   if (!renderer) {
     std::cout << "Failed to create renderer" << SDL_GetError() << std::endl;
     exit(1);
@@ -51,6 +38,7 @@ void App::init() {
 /// @brief Update app state
 void App::update() {
   _handleInputs();
+  _updateTime();
   // TODO: logic updates
 }
 
@@ -60,11 +48,46 @@ void App::render() {
   SDL_SetRenderDrawColor(renderer, bgColor[0], bgColor[1], bgColor[2], 255);
   SDL_RenderClear(renderer);
   // -- create new render --
-  SDL_Rect fill = { winSize[0]/2 - 25, winSize[1]/2 - 25, 50, 50};
+
+  // FPS rect
+  Uint8 g = SDL_clamp(fps * 4 - 80, 0, 255);
+  Uint8 r = 255 - g;
+  SDL_Rect fpsRect = {10, 10, 40, 10};
+  SDL_SetRenderDrawColor(renderer, r, g, 20, 255);
+  SDL_RenderFillRect(renderer, &fpsRect);
+
+  // draw rectangles
+  SDL_Rect rect1 = {winSize[0]/2 - 40, winSize[1]/2 - 40, 50, 50};
+  SDL_Rect rect2 = {winSize[0]/2 - 25, winSize[1]/2 - 25, 50, 50};
+  SDL_Rect rect3 = {winSize[0]/2 - 10, winSize[1]/2 - 10, 50, 50};
+  SDL_SetRenderDrawColor(renderer, 180, 180, 255, 255);
+  SDL_RenderFillRect(renderer, &rect1);
   SDL_SetRenderDrawColor(renderer, 200, 200, 255, 255);
-  SDL_RenderFillRect(renderer, &fill);
+  SDL_RenderFillRect(renderer, &rect2);
+  SDL_SetRenderDrawColor(renderer, 220, 220, 255, 255);
+  SDL_RenderFillRect(renderer, &rect3);
+
+  // draw polygon
+  const std::vector<SDL_Vertex> verts = {
+    { SDL_FPoint{ 100, 100 }, SDL_Color{ 255, 0, 0, 255 }, SDL_FPoint{ 0 } },
+    { SDL_FPoint{ 60, 250 }, SDL_Color{ 0, 0, 255, 255 }, SDL_FPoint{ 0 } },
+    { SDL_FPoint{ 290, 250 }, SDL_Color{ 0, 255, 0, 255 }, SDL_FPoint{ 0 } },
+    { SDL_FPoint{ 250, 100 }, SDL_Color{ 255, 255, 0, 255 }, SDL_FPoint{ 0 } },
+  };
+  const int order[] = {0,1,2,0,2,3};
+  SDL_RenderGeometry(renderer, nullptr, verts.data(), verts.size(), order, 6);
+
   // -- draw new render --
   SDL_RenderPresent(renderer);
+}
+
+/// @brief Update timers per frame
+void App::_updateTime() {
+  Uint32 prevTime = _alphaTime;
+  _alphaTime = SDL_GetPerformanceCounter();
+  deltaTime = (_alphaTime - prevTime) * 1000 / SDL_GetPerformanceFrequency();
+  elapsedTime += deltaTime;
+  fps = 1000 / deltaTime;
 }
 
 #pragma region Input_Handling

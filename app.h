@@ -17,11 +17,17 @@ namespace Global {
       Uint8 bgColor[3] = {20, 20, 30};
       Sint32 mousePos[2] = {0, 0};
       Sint32 winSize[2] = {WIN_W, WIN_H};
+      Uint32 deltaTime = 0; // in ms
+      Uint32 elapsedTime = 0; // in ms
+      float fps = 0;
       // systems
       void init();
       void update();
       void render();
     private:
+      // internal timer helper
+      Uint32 _alphaTime = 0;
+      void _updateTime();
       // internal input handlers
       void _handleInputs();
       void _handleKeyboardEvent(SDL_KeyboardEvent& key);
