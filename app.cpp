@@ -2,7 +2,9 @@
 #include <vector>
 #include <math.h>
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_ttf.h>
 #include "app.h"
+#include "util.h"
 
 using namespace Global;
 
@@ -20,7 +22,7 @@ void App::init() {
   // initialize window
   window = SDL_CreateWindow("SDL2 Window", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, WIN_W, WIN_H, windowFlags);
   if (!window) {
-    std::cout << "Failed to open window" << SDL_GetError() << std::endl;
+    std::cout << "Failed to open window: " << SDL_GetError() << std::endl;
     exit(1);
   }
 
@@ -30,9 +32,32 @@ void App::init() {
   // initialize renderer
   renderer = SDL_CreateRenderer(window, -1, renderFlags);
   if (!renderer) {
-    std::cout << "Failed to create renderer" << SDL_GetError() << std::endl;
+    std::cout << "Failed to create renderer: " << SDL_GetError() << std::endl;
     exit(1);
   }
+
+  // initialize font
+  if (TTF_Init() < 0) {
+    std::cout << "Failed to initialize TTF: " << SDL_GetError() << std::endl;
+    exit(2);
+  }
+  font = TTF_OpenFont("assets/retro_computer.ttf", 16);
+  if (font == nullptr) {
+    std::cout << "Couldn't find font: " << SDL_GetError() << std::endl;
+  }
+  TTF_SetFontStyle(font, 0);
+  // TTF_SetFontOutline(font, 0);
+  // TTF_SetFontKerning(font, 0);
+  // TTF_SetFontHinting(font, 0);
+
+}
+
+/// @brief Destroy resources on exit
+void App::cleanup() {
+  TTF_CloseFont(font);
+  TTF_Quit();
+  SDL_DestroyRenderer(renderer);
+  SDL_DestroyWindow(window);
 }
 
 /// @brief Update app state
@@ -50,11 +75,11 @@ void App::render() {
   // -- create new render --
 
   // FPS rect
-  Uint8 g = SDL_clamp(fps * 4 - 80, 0, 255);
-  Uint8 r = 255 - g;
-  SDL_Rect fpsRect = {10, 10, 40, 10};
-  SDL_SetRenderDrawColor(renderer, r, g, 20, 255);
-  SDL_RenderFillRect(renderer, &fpsRect);
+  // Uint8 g = SDL_clamp(fps * 4 - 80, 0, 255);
+  // Uint8 r = 255 - g;
+  // SDL_Rect fpsRect = {10, 10, 40, 10};
+  // SDL_SetRenderDrawColor(renderer, r, g, 20, 255);
+  // SDL_RenderFillRect(renderer, &fpsRect);
 
   // draw rectangles
   SDL_Rect rect1 = {winSize[0]/2 - 40, winSize[1]/2 - 40, 50, 50};
@@ -77,8 +102,29 @@ void App::render() {
   const int order[] = {0,1,2,0,2,3};
   SDL_RenderGeometry(renderer, nullptr, verts.data(), verts.size(), order, 6);
 
+  // render FPS
+  std::string fpsStr = Util::floatToString(fps);
+  std::string fpsTxt = "FPS: ";
+  fpsTxt.append(fpsStr);
+  const char* str = fpsTxt.c_str();
+  renderText(str, 10, 10);
+
   // -- draw new render --
   SDL_RenderPresent(renderer);
+}
+
+/// @brief Helper function for rendering text with SDL2_ttf
+/// @param text char array for text
+/// @param x top left pos.x
+/// @param y top left pos.y
+void App::renderText(const char* text, int x, int y) {
+  const SDL_Color ttfColor = {255, 255, 255, 255};
+  SDL_Surface* ttfSurface = TTF_RenderText_Solid(font, text, ttfColor);
+  SDL_Texture* ttfTexture = SDL_CreateTextureFromSurface(renderer, ttfSurface);
+  int ttfW = 0, ttfH = 0;
+  SDL_QueryTexture(ttfTexture, nullptr, nullptr, &ttfW, &ttfH);
+  SDL_Rect dstrect = {x, y, ttfW, ttfH};
+  SDL_RenderCopy(renderer, ttfTexture, nullptr, &dstrect);
 }
 
 /// @brief Update timers per frame

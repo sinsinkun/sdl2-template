@@ -1,5 +1,6 @@
 #pragma once
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_ttf.h>
 
 namespace Global {
   // -- Constants --
@@ -13,6 +14,7 @@ namespace Global {
       // SDL stuff
       SDL_Renderer* renderer;
       SDL_Window* window;
+      TTF_Font* font;
       // custom global states
       Uint8 bgColor[3] = {20, 20, 30};
       Sint32 mousePos[2] = {0, 0};
@@ -24,6 +26,8 @@ namespace Global {
       void init();
       void update();
       void render();
+      void cleanup();
+      void renderText(const char* text, int x, int y);
     private:
       // internal timer helper
       Uint32 _alphaTime = 0;

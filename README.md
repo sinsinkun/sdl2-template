@@ -15,3 +15,7 @@ API Reference: https://wiki.libsdl.org/SDL2/FrontPage
 ## Enabling OpenGL
 - Swapped SDL native renderer for OpenGL renderer on gui branch
 - Added new flag to tasks.json `-lopengl32`
+
+## Text rendering
+- Utilizing the SDL2_ttf library for rendering text
+- Added new flag to tasks.json `-lSDL2_ttf`

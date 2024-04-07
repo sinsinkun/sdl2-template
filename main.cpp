@@ -19,5 +19,7 @@ int main(int argc, char* argv[]) {
     SDL_Delay(16); // artificial delay
   }
 
+  // exit
+  app.cleanup();
   return 0;
 }
