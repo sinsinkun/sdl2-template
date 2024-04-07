@@ -74,13 +74,6 @@ void App::render() {
   SDL_RenderClear(renderer);
   // -- create new render --
 
-  // FPS rect
-  // Uint8 g = SDL_clamp(fps * 4 - 80, 0, 255);
-  // Uint8 r = 255 - g;
-  // SDL_Rect fpsRect = {10, 10, 40, 10};
-  // SDL_SetRenderDrawColor(renderer, r, g, 20, 255);
-  // SDL_RenderFillRect(renderer, &fpsRect);
-
   // draw rectangles
   SDL_Rect rect1 = {winSize[0]/2 - 40, winSize[1]/2 - 40, 50, 50};
   SDL_Rect rect2 = {winSize[0]/2 - 25, winSize[1]/2 - 25, 50, 50};
@@ -103,11 +96,14 @@ void App::render() {
   SDL_RenderGeometry(renderer, nullptr, verts.data(), verts.size(), order, 6);
 
   // render FPS
+  Uint8 g = SDL_clamp(fps * 4 - 20, 0, 255);
+  Uint8 r = 255 - g;
   std::string fpsStr = Util::floatToString(fps);
   std::string fpsTxt = "FPS: ";
   fpsTxt.append(fpsStr);
   const char* str = fpsTxt.c_str();
-  renderText(str, 10, 10);
+  const SDL_Color fpsColor = {r, g, 80};
+  renderText(str, 10, 10, fpsColor);
 
   // -- draw new render --
   SDL_RenderPresent(renderer);
@@ -117,9 +113,8 @@ void App::render() {
 /// @param text char array for text
 /// @param x top left pos.x
 /// @param y top left pos.y
-void App::renderText(const char* text, int x, int y) {
-  const SDL_Color ttfColor = {255, 255, 255, 255};
-  SDL_Surface* ttfSurface = TTF_RenderText_Solid(font, text, ttfColor);
+void App::renderText(const char* text, int x, int y, SDL_Color color) {
+  SDL_Surface* ttfSurface = TTF_RenderText_Solid(font, text, color);
   SDL_Texture* ttfTexture = SDL_CreateTextureFromSurface(renderer, ttfSurface);
   int ttfW = 0, ttfH = 0;
   SDL_QueryTexture(ttfTexture, nullptr, nullptr, &ttfW, &ttfH);

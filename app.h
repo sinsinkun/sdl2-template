@@ -28,7 +28,7 @@ namespace Global {
       void update();
       void render();
       void cleanup();
-      void renderText(const char* text, int x, int y);
+      void renderText(const char* text, int x, int y, SDL_Color color);
     private:
       // internal timer helper
       Uint32 _alphaTime = 0;
