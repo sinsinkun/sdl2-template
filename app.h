@@ -19,6 +19,7 @@ namespace Global {
       Uint8 bgColor[3] = {20, 20, 30};
       Sint32 mousePos[2] = {0, 0};
       Sint32 winSize[2] = {WIN_W, WIN_H};
+      bool winFocus = true;
       Uint32 deltaTime = 0; // in ms
       Uint32 elapsedTime = 0; // in ms
       float fps = 0;

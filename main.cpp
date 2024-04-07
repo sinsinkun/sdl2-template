@@ -16,7 +16,8 @@ int main(int argc, char* argv[]) {
   while (true) {
     app.update();
     app.render();
-    SDL_Delay(16); // artificial delay
+    if (app.winFocus) SDL_Delay(16); // artificial delay
+    else SDL_Delay(32);
   }
 
   // exit

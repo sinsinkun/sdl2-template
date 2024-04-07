@@ -235,8 +235,12 @@ void App::_handleWindowEvent(SDL_WindowEvent& win) {
       winSize[0] = win.data1;
       winSize[1] = win.data2;
       break;
-    case SDL_WINDOWEVENT_HIDDEN:
-    case SDL_WINDOWEVENT_SHOWN:
+    case SDL_WINDOWEVENT_FOCUS_LOST:
+      winFocus = false;
+      break;
+    case SDL_WINDOWEVENT_FOCUS_GAINED:
+      winFocus = true;
+      break;
     default:
       break;
   }
