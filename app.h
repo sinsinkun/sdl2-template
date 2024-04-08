@@ -26,7 +26,7 @@ namespace Global {
       Uint32 elapsedTime = 0; // in ms
       float fps = 0;
       // asset preload
-      Button* btn1 = new Button{ 1 };
+      Button btn1 = Button{ 1 };
       // systems
       void init();
       void update();

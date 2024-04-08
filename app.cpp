@@ -50,11 +50,11 @@ void App::init() {
   // TTF_SetFontOutline(font, 0);
   // TTF_SetFontKerning(font, 0);
   // TTF_SetFontHinting(font, 0);
-  btn1->size[0] = 90;
-  btn1->size[1] = 40;
-  btn1->text = "Button 1";
+  btn1.size[0] = 90;
+  btn1.size[1] = 40;
+  btn1.text = "Button 1";
   TTF_Font* btnFont = TTF_OpenFont("assets/retro_computer.ttf", 11);
-  btn1->font = btnFont;
+  btn1.font = btnFont;
 }
 
 /// @brief Destroy resources on exit
@@ -70,9 +70,9 @@ void App::update() {
   _handleInputs();
   _updateTime();
   // TODO: logic updates
-  btn1->update(mousePos, mouseClicking);
-  btn1->pos[0] = 10;
-  btn1->pos[1] = winSize[1] - btn1->size[1] - 10;
+  btn1.update(mousePos, mouseClicking);
+  btn1.pos[0] = 10;
+  btn1.pos[1] = winSize[1] - btn1.size[1] - 10;
 }
 
 /// @brief Draw to window
@@ -104,7 +104,7 @@ void App::render() {
   SDL_RenderGeometry(renderer, nullptr, verts.data(), verts.size(), order, 6);
 
   // draw button
-  btn1->render(renderer);
+  btn1.render(renderer);
 
   // render FPS
   Uint8 g = SDL_clamp(fps * 4 - 20, 0, 255);
