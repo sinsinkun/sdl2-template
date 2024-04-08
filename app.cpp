@@ -1,6 +1,9 @@
 #include <iostream>
+#include <string>
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_ttf.h>
 #include "app.h"
+#include "util.h"
 
 using namespace Global;
 
@@ -30,12 +33,22 @@ void App::init() {
     std::cout << "Failed to create renderer" << SDL_GetError() << std::endl;
     exit(1);
   }
+
+  // initialize TTF
+  if (TTF_Init() < 0) {
+    std::cout << "Failed to load TTF library" << SDL_GetError() << std::endl;
+    exit(1);
+  }
+  fontp1 = TTF_OpenFont("asset/arial.ttf", 10);
 }
 
 /// @brief Free resources on exit
 void App::cleanup() {
+  TTF_CloseFont(fontp1);
+  TTF_Quit();
   SDL_DestroyRenderer(renderer);
   SDL_DestroyWindow(window);
+  SDL_Quit();
 }
 
 /// @brief Update app state
@@ -50,9 +63,17 @@ void App::render() {
   SDL_SetRenderDrawColor(renderer, bgColor[0], bgColor[1], bgColor[2], 255);
   SDL_RenderClear(renderer);
   // -- create new render --
+
+  // draw rectangle
   SDL_Rect fill = { winSize[0]/2 - 25, winSize[1]/2 - 25, 50, 50};
   SDL_SetRenderDrawColor(renderer, 200, 200, 255, 255);
   SDL_RenderFillRect(renderer, &fill);
+
+  // draw text
+  SDL_Color txtclr = {200, 200, 200};
+  std::string txt = "Hello world";
+  Util::renderText(renderer, fontp1, txt.c_str(), 10, 10, txtclr);
+
   // -- draw new render --
   SDL_RenderPresent(renderer);
 }
