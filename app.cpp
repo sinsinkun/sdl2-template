@@ -58,6 +58,7 @@ void App::cleanup() {
 /// @brief Update app state
 void App::update() {
   _handleInputs();
+  _updateTime();
   // TODO: logic updates
 }
 
@@ -80,6 +81,20 @@ void App::render() {
 
   // -- draw new render --
   SDL_RenderPresent(renderer);
+}
+
+/// @brief Update timers per frame
+void App::_updateTime() {
+  Uint32 prevTime = _alphaTime;
+  _alphaTime = SDL_GetPerformanceCounter();
+  deltaTime = (_alphaTime - prevTime) * 1000 / SDL_GetPerformanceFrequency();
+  elapsedTime += deltaTime;
+  if (_fpsSkip < 10) { // calculate fps at 10% speed
+    _fpsSkip++;
+  } else {
+    fps = 1000.f / (float)deltaTime;
+    _fpsSkip = 0;
+  }
 }
 
 #pragma region Input_Handling
