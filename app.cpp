@@ -1,37 +1,20 @@
 #include <iostream>
 #include <SDL2/SDL.h>
-// #include <GL/gl.h>
-// #include <GL/glu.h>
 #include "app.h"
 
 using namespace Global;
 
 /// @brief Start SDL window instance
 void App::init() {
-  int renderFlags, windowFlags;
-  renderFlags = SDL_RENDERER_ACCELERATED;
-  windowFlags = SDL_WINDOW_RESIZABLE; // SDL_WINDOW_OPENGL;
-
+  // initialize SDL
   if (SDL_Init(SDL_INIT_VIDEO) < 0) {
     std::cout << "Could not initialize SDL: " << SDL_GetError() << std::endl;
     exit(1);
   }
 
-  // OpenGL setup
-  // SDL_GL_SetAttribute( SDL_GL_RED_SIZE, 5);
-  // SDL_GL_SetAttribute( SDL_GL_GREEN_SIZE, 5);
-  // SDL_GL_SetAttribute( SDL_GL_BLUE_SIZE, 5);
-  // SDL_GL_SetAttribute( SDL_GL_DEPTH_SIZE, 16);
-  // SDL_GL_SetAttribute( SDL_GL_DOUBLEBUFFER, 1);
-
-  window = SDL_CreateWindow(
-    "Game Window",
-    SDL_WINDOWPOS_UNDEFINED,
-    SDL_WINDOWPOS_UNDEFINED,
-    WIN_W,
-    WIN_H,
-    windowFlags
-  );
+  // initialize window
+  int windowFlags = SDL_WINDOW_RESIZABLE;
+  window = SDL_CreateWindow("SDL Window", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, WIN_W, WIN_H, windowFlags);
   if (!window) {
     std::cout << "Failed to open window" << SDL_GetError() << std::endl;
     exit(1);
@@ -39,9 +22,10 @@ void App::init() {
 
   SDL_SetWindowMinimumSize(window, WIN_MIN_W, WIN_MIN_H);
   SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "linear");
-  renderer = SDL_CreateRenderer(window, -1, renderFlags);
-  // SDL_GLContext context = SDL_GL_CreateContext(app.window);
 
+  // initialize renderer
+  int renderFlags = SDL_RENDERER_ACCELERATED;
+  renderer = SDL_CreateRenderer(window, -1, renderFlags);
   if (!renderer) {
     std::cout << "Failed to create renderer" << SDL_GetError() << std::endl;
     exit(1);
