@@ -1,7 +1,7 @@
 #pragma once
+#include <string>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
-#include <string>
 
 namespace Util {
   std::string floatToString(float n);

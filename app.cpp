@@ -1,6 +1,7 @@
 #include <iostream>
 #include <vector>
 #include <math.h>
+#include <string>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
 #include "app.h"
@@ -11,17 +12,15 @@ using namespace Global;
 
 /// @brief Start SDL window instance
 void App::init() {
-  int renderFlags, windowFlags;
-  renderFlags = SDL_RENDERER_ACCELERATED;
-  windowFlags = SDL_WINDOW_RESIZABLE;
-
+  // initialize SDL
   if (SDL_Init(SDL_INIT_VIDEO) < 0) {
     std::cout << "Could not initialize SDL: " << SDL_GetError() << std::endl;
     exit(1);
   }
 
   // initialize window
-  window = SDL_CreateWindow("SDL2 Window", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, WIN_W, WIN_H, windowFlags);
+  int windowFlags = SDL_WINDOW_RESIZABLE;
+  window = SDL_CreateWindow("SDL Window", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, WIN_W, WIN_H, windowFlags);
   if (!window) {
     std::cout << "Failed to open window: " << SDL_GetError() << std::endl;
     exit(1);
@@ -31,25 +30,23 @@ void App::init() {
   SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "linear");
 
   // initialize renderer
+  int renderFlags = SDL_RENDERER_ACCELERATED;
   renderer = SDL_CreateRenderer(window, -1, renderFlags);
   if (!renderer) {
     std::cout << "Failed to create renderer: " << SDL_GetError() << std::endl;
     exit(1);
   }
 
-  // initialize font
+  // initialize TTF
   if (TTF_Init() < 0) {
-    std::cout << "Failed to initialize TTF: " << SDL_GetError() << std::endl;
-    exit(2);
+    std::cout << "Failed to load TTF library: " << SDL_GetError() << std::endl;
+    exit(1);
   }
-  font = TTF_OpenFont("assets/retro_computer.ttf", 16);
-  if (font == nullptr) {
-    std::cout << "Couldn't find font: " << SDL_GetError() << std::endl;
+  fontp1 = TTF_OpenFont("assets/roboto.ttf", 16);
+  if (fontp1 == nullptr) {
+    std::cout << "Failed to load font: " << SDL_GetError() << std::endl;
   }
-  TTF_SetFontStyle(font, 0);
-  // TTF_SetFontOutline(font, 0);
-  // TTF_SetFontKerning(font, 0);
-  // TTF_SetFontHinting(font, 0);
+  TTF_SetFontStyle(fontp1, TTF_STYLE_NORMAL);
   btn1.size[0] = 90;
   btn1.size[1] = 40;
   btn1.text = "Button 1";
@@ -57,12 +54,13 @@ void App::init() {
   btn1.font = btnFont;
 }
 
-/// @brief Destroy resources on exit
+/// @brief Free resources on exit
 void App::cleanup() {
-  TTF_CloseFont(font);
+  TTF_CloseFont(fontp1);
   TTF_Quit();
   SDL_DestroyRenderer(renderer);
   SDL_DestroyWindow(window);
+  SDL_Quit();
 }
 
 /// @brief Update app state
@@ -109,12 +107,12 @@ void App::render() {
   // render FPS
   Uint8 g = SDL_clamp(fps * 4 - 20, 0, 255);
   Uint8 r = 255 - g;
-  std::string fpsStr = Util::floatToString(fps, 0);
+  std::string fpsStr = Util::floatToString(fps, 2);
   std::string fpsTxt = "FPS: ";
   fpsTxt.append(fpsStr);
   const char* str = fpsTxt.c_str();
   const SDL_Color fpsColor = {r, g, 80};
-  Util::renderText(renderer, font, str, 10, 10, fpsColor);
+  Util::renderText(renderer, fontp1, str, 10, 10, fpsColor);
 
   // -- draw new render --
   SDL_RenderPresent(renderer);
@@ -129,7 +127,7 @@ void App::_updateTime() {
   if (_fpsSkip < 10) { // calculate fps at 10% speed
     _fpsSkip++;
   } else {
-    fps = 1000 / deltaTime;
+    fps = 1000.f / (float)deltaTime;
     _fpsSkip = 0;
   }
 }
@@ -156,7 +154,8 @@ void App::_handleInputs() {
         _handleWindowEvent(event.window);
         break;
       case SDL_QUIT:
-        exit(0);
+        // safe exit
+        running = false;
         break;
       default:
         break;
@@ -179,7 +178,7 @@ void App::_handleKeyboardEvent(SDL_KeyboardEvent& key) {
   } else if (key.type == SDL_KEYUP) {
     switch (key.keysym.sym) {
       case SDLK_ESCAPE:
-        exit(0);
+        running = false;
         break;
       default:
         std::cout << "Let go of key: " << SDL_GetKeyName(key.keysym.sym) << std::endl;

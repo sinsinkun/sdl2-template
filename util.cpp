@@ -1,5 +1,6 @@
-#include <string>
+#include <iostream>
 #include <iomanip>
+#include <string>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
 #include "util.h"
@@ -46,4 +47,8 @@ void Util::renderText(SDL_Renderer* renderer, TTF_Font* font, const char* text, 
   SDL_QueryTexture(ttfTexture, nullptr, nullptr, &ttfW, &ttfH);
   SDL_Rect dstrect = {x, y, ttfW, ttfH};
   SDL_RenderCopy(renderer, ttfTexture, nullptr, &dstrect);
+
+  // clean up (TODO: optimize by caching)
+  SDL_FreeSurface(ttfSurface);
+  SDL_DestroyTexture(ttfTexture);
 }

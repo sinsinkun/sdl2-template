@@ -15,8 +15,9 @@ namespace Global {
       // SDL stuff
       SDL_Renderer* renderer;
       SDL_Window* window;
-      TTF_Font* font;
+      TTF_Font* fontp1;
       // custom global states
+      bool running = true;
       Uint8 bgColor[3] = {20, 20, 30};
       Sint32 mousePos[2] = {0, 0};
       bool mouseClicking = false;
@@ -33,7 +34,7 @@ namespace Global {
       void render();
       void cleanup();
     private:
-      // internal timer helper
+      // timer helpers
       Uint8 _fpsSkip = 0;
       Uint32 _alphaTime = 0;
       void _updateTime();
