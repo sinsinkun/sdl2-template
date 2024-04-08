@@ -14,6 +14,7 @@ namespace Global {
       SDL_Renderer* renderer;
       SDL_Window* window;
       // custom global states
+      bool running = true;
       Uint8 bgColor[3] = {20, 20, 30};
       Sint32 mousePos[2] = {0, 0};
       Sint32 winSize[2] = {WIN_W, WIN_H};
@@ -21,6 +22,7 @@ namespace Global {
       void init();
       void update();
       void render();
+      void cleanup();
     private:
       // internal input handlers
       void _handleInputs();

@@ -13,11 +13,13 @@ int main(int argc, char* argv[]) {
   app.init();
 
   // event loop
-  while (true) {
+  while (app.running) {
     app.update();
     app.render();
     SDL_Delay(16); // artificial delay
   }
 
+  // cleanup before exit
+  app.cleanup();
   return 0;
 }

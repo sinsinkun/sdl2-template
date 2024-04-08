@@ -32,6 +32,12 @@ void App::init() {
   }
 }
 
+/// @brief Free resources on exit
+void App::cleanup() {
+  SDL_DestroyRenderer(renderer);
+  SDL_DestroyWindow(window);
+}
+
 /// @brief Update app state
 void App::update() {
   _handleInputs();
@@ -73,7 +79,8 @@ void App::_handleInputs() {
         _handleWindowEvent(event.window);
         break;
       case SDL_QUIT:
-        exit(0);
+        // safe exit
+        running = false;
         break;
       default:
         break;
@@ -96,7 +103,7 @@ void App::_handleKeyboardEvent(SDL_KeyboardEvent& key) {
   } else if (key.type == SDL_KEYUP) {
     switch (key.keysym.sym) {
       case SDLK_ESCAPE:
-        exit(0);
+        running = false;
         break;
       default:
         std::cout << "Let go of key: " << SDL_GetKeyName(key.keysym.sym) << std::endl;
