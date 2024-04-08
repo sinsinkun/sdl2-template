@@ -39,7 +39,7 @@ void App::init() {
     std::cout << "Failed to load TTF library: " << SDL_GetError() << std::endl;
     exit(1);
   }
-  fontp1 = TTF_OpenFont("assets/roboto.ttf", 14);
+  fontp1 = TTF_OpenFont("assets/roboto.ttf", 16);
   if (fontp1 == nullptr) {
     std::cout << "Failed to load font: " << SDL_GetError() << std::endl;
   }
@@ -74,10 +74,15 @@ void App::render() {
   SDL_SetRenderDrawColor(renderer, 200, 200, 255, 255);
   SDL_RenderFillRect(renderer, &fill);
 
-  // draw text
-  SDL_Color txtclr = {200, 200, 200};
-  std::string txt = "Hello world";
-  Util::renderText(renderer, fontp1, txt.c_str(), 10, 10, txtclr);
+  // render FPS
+  Uint8 g = SDL_clamp(fps * 4 - 20, 0, 255);
+  Uint8 r = 255 - g;
+  std::string fpsStr = Util::floatToString(fps, 2);
+  std::string fpsTxt = "FPS: ";
+  fpsTxt.append(fpsStr);
+  const char* str = fpsTxt.c_str();
+  const SDL_Color fpsColor = {r, g, 80};
+  Util::renderText(renderer, fontp1, str, 10, 10, fpsColor);
 
   // -- draw new render --
   SDL_RenderPresent(renderer);
