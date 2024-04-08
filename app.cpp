@@ -19,7 +19,7 @@ void App::init() {
   int windowFlags = SDL_WINDOW_RESIZABLE;
   window = SDL_CreateWindow("SDL Window", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, WIN_W, WIN_H, windowFlags);
   if (!window) {
-    std::cout << "Failed to open window" << SDL_GetError() << std::endl;
+    std::cout << "Failed to open window: " << SDL_GetError() << std::endl;
     exit(1);
   }
 
@@ -30,16 +30,20 @@ void App::init() {
   int renderFlags = SDL_RENDERER_ACCELERATED;
   renderer = SDL_CreateRenderer(window, -1, renderFlags);
   if (!renderer) {
-    std::cout << "Failed to create renderer" << SDL_GetError() << std::endl;
+    std::cout << "Failed to create renderer: " << SDL_GetError() << std::endl;
     exit(1);
   }
 
   // initialize TTF
   if (TTF_Init() < 0) {
-    std::cout << "Failed to load TTF library" << SDL_GetError() << std::endl;
+    std::cout << "Failed to load TTF library: " << SDL_GetError() << std::endl;
     exit(1);
   }
-  fontp1 = TTF_OpenFont("asset/arial.ttf", 10);
+  fontp1 = TTF_OpenFont("assets/roboto.ttf", 14);
+  if (fontp1 == nullptr) {
+    std::cout << "Failed to load font: " << SDL_GetError() << std::endl;
+  }
+  TTF_SetFontStyle(fontp1, TTF_STYLE_NORMAL);
 }
 
 /// @brief Free resources on exit

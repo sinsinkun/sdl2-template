@@ -47,5 +47,8 @@ void Util::renderText(SDL_Renderer* renderer, TTF_Font* font, const char* text, 
   SDL_QueryTexture(ttfTexture, nullptr, nullptr, &ttfW, &ttfH);
   SDL_Rect dstrect = {x, y, ttfW, ttfH};
   SDL_RenderCopy(renderer, ttfTexture, nullptr, &dstrect);
-  std::cout << "Render text" << std::endl;
+
+  // clean up (TODO: optimize by caching)
+  SDL_FreeSurface(ttfSurface);
+  SDL_DestroyTexture(ttfTexture);
 }
