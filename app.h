@@ -1,7 +1,7 @@
 #pragma once
+#include <vector>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
-#include "UI/button.h"
 
 namespace Global {
   // -- Constants --
@@ -9,6 +9,14 @@ namespace Global {
   const int WIN_H = 600;
   const int WIN_MIN_W = 400;
   const int WIN_MIN_H = 300;
+
+  // -- Helper structs --
+  struct TextureCache {
+    int x = 0;
+    int y = 0;
+    SDL_Texture* texture;
+  };
+
   // -- App definition --
   class App {
     public:
@@ -26,8 +34,8 @@ namespace Global {
       Uint32 deltaTime = 0; // in ms
       Uint32 elapsedTime = 0; // in ms
       float fps = 0;
-      // asset preload
-      Button btn1 = Button{ 1 };
+      // asset store
+      std::vector<TextureCache> textCache;
       // systems
       void init();
       void update();

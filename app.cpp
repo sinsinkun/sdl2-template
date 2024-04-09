@@ -6,7 +6,6 @@
 #include <SDL2/SDL_ttf.h>
 #include "app.h"
 #include "util.h"
-#include "UI/button.h"
 
 using namespace Global;
 
@@ -47,17 +46,16 @@ void App::init() {
     std::cout << "Failed to load font: " << SDL_GetError() << std::endl;
   }
   TTF_SetFontStyle(fontp1, TTF_STYLE_NORMAL);
-  btn1.size[0] = 90;
-  btn1.size[1] = 40;
-  btn1.text = "Button 1";
-  TTF_Font* btnFont = TTF_OpenFont("assets/roboto.ttf", 18);
-  TTF_SetFontStyle(btnFont, TTF_STYLE_NORMAL);
-  btn1.font = btnFont;
 }
 
 /// @brief Free resources on exit
 void App::cleanup() {
-  btn1.destroy();
+  std::cout << "Closing program" << std::endl;
+  // free cache
+  for (TextureCache tc: textCache) {
+    SDL_DestroyTexture(tc.texture);
+  }
+  // free systems
   TTF_CloseFont(fontp1);
   TTF_Quit();
   SDL_DestroyRenderer(renderer);
@@ -67,12 +65,19 @@ void App::cleanup() {
 
 /// @brief Update app state
 void App::update() {
+  // -- update internal states --
   _handleInputs();
   _updateTime();
-  // TODO: logic updates
-  btn1.update(mousePos, mouseClicking);
-  btn1.pos[0] = 10;
-  btn1.pos[1] = winSize[1] - btn1.size[1] - 10;
+  // -- logic updates --
+
+  // create cached text
+  if (textCache.size() < 1) {
+    std::string txt = "Hello cache";
+    SDL_Color txtc = {200, 200, 240};
+    SDL_Texture* txtcache = Util::createTextCache(renderer, fontp1, txt.c_str(), txtc);
+    TextureCache txttc = { 10, winSize[1] - 30, txtcache };
+    textCache.push_back(txttc);
+  }
 }
 
 /// @brief Draw to window
@@ -103,9 +108,6 @@ void App::render() {
   const int order[] = {0,1,2,0,2,3};
   SDL_RenderGeometry(renderer, nullptr, verts.data(), verts.size(), order, 6);
 
-  // draw button
-  btn1.render(renderer);
-
   // render FPS
   Uint8 g = SDL_clamp(fps * 4 - 20, 0, 255);
   Uint8 r = 255 - g;
@@ -115,6 +117,11 @@ void App::render() {
   const char* str = fpsTxt.c_str();
   const SDL_Color fpsColor = {r, g, 80};
   Util::renderText(renderer, fontp1, str, 10, 10, fpsColor);
+
+  // render cached text
+  for (TextureCache tc: textCache) {
+    Util::renderCachedTexture(renderer, tc.texture, tc.x, tc.y);
+  }
 
   // -- draw new render --
   SDL_RenderPresent(renderer);
