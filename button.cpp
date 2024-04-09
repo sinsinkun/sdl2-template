@@ -1,7 +1,7 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
 #include "button.h"
-#include "../util.h"
+#include "util.h"
 
 using namespace Global;
 
@@ -17,7 +17,6 @@ void Button::update(Sint32 mousePos[2], bool mouseClick) {
   else if (newClick && _clicking) state = ButtonState::Clicking;
   else if (!newClick && _clicking) state = ButtonState::Just_Released;
   else state = ButtonState::None;
-
 }
 
 /// @brief Render button to renderer
