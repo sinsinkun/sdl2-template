@@ -48,6 +48,10 @@ void Button::render(SDL_Renderer* renderer) {
   }
 }
 
+void Button::destroy() {
+  TTF_CloseFont(font);
+}
+
 /// @brief Check is mouse is hovering over button
 /// @param mousePos 
 /// @return is hovered

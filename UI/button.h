@@ -33,6 +33,7 @@ namespace Global {
       // methods
       void update(Sint32 mousePos[2], bool mouseClick);
       void render(SDL_Renderer* renderer);
+      void destroy();
     private:
       bool _clicking = false;
       bool _isHovered(Sint32 mousePos[2]);

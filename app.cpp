@@ -50,12 +50,14 @@ void App::init() {
   btn1.size[0] = 90;
   btn1.size[1] = 40;
   btn1.text = "Button 1";
-  TTF_Font* btnFont = TTF_OpenFont("assets/retro_computer.ttf", 11);
+  TTF_Font* btnFont = TTF_OpenFont("assets/roboto.ttf", 18);
+  TTF_SetFontStyle(btnFont, TTF_STYLE_NORMAL);
   btn1.font = btnFont;
 }
 
 /// @brief Free resources on exit
 void App::cleanup() {
+  btn1.destroy();
   TTF_CloseFont(fontp1);
   TTF_Quit();
   SDL_DestroyRenderer(renderer);

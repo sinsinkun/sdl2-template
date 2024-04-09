@@ -41,7 +41,7 @@ std::string Util::floatToString(float n, int precision) {
 /// @param y 
 /// @param color 
 void Util::renderText(SDL_Renderer* renderer, TTF_Font* font, const char* text, int x, int y, SDL_Color color) {
-  SDL_Surface* ttfSurface = TTF_RenderText_Solid(font, text, color);
+  SDL_Surface* ttfSurface = TTF_RenderText_Blended(font, text, color);
   SDL_Texture* ttfTexture = SDL_CreateTextureFromSurface(renderer, ttfSurface);
   int ttfW = 0, ttfH = 0;
   SDL_QueryTexture(ttfTexture, nullptr, nullptr, &ttfW, &ttfH);
