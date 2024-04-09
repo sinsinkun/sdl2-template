@@ -12,10 +12,12 @@ API Reference: https://wiki.libsdl.org/SDL2/FrontPage
 - (FYI: `-lmingw32 -lSDL2main -lSDL2` flags were added to tasks.json manually)
 - Hit run/debug button in VSCode, or F5 to compile and run
 
+## Text rendering
+- Utilizing the SDL2_ttf library for rendering text
+- Needs to be installed separately with `pacman -Ss wsl2_ttf` and `pacman -S {...}`
+- Can be removed if unnecessary for your purposes
+- Requires flag in tasks.json `-lSDL2_ttf` (remove if not using library)
+
 ## Enabling OpenGL
 - Swapped SDL native renderer for OpenGL renderer on gui branch
 - Added new flag to tasks.json `-lopengl32`
-
-## Text rendering
-- Utilizing the SDL2_ttf library for rendering text
-- Added new flag to tasks.json `-lSDL2_ttf`
