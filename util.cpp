@@ -98,3 +98,23 @@ void Util::drawCircle(SDL_Renderer *renderer, int x, int y, int radius, SDL_Colo
     }
   }
 }
+
+/// @brief Draw donut
+/// @param renderer 
+/// @param x 
+/// @param y 
+/// @param radius 
+/// @param innerRadius 
+/// @param color 
+void Util::drawDonut(SDL_Renderer *renderer, int x, int y, int radius, int innerRadius, SDL_Color color) {
+  SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
+  for (int w = 0; w < radius * 2; w++) {
+    for (int h = 0; h < radius * 2; h++) {
+      int dx = radius - w; // horizontal offset
+      int dy = radius - h; // vertical offset
+      if ((dx*dx + dy*dy) <= (radius * radius) && (dx*dx + dy*dy) >= (innerRadius * innerRadius)) {
+        SDL_RenderDrawPoint(renderer, x + dx, y + dy);
+      }
+    }
+  }
+}

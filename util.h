@@ -10,4 +10,5 @@ namespace Util {
   SDL_Texture* createTextCache(SDL_Renderer* renderer, TTF_Font* font, const char* text, SDL_Color color);
   void renderCachedTexture(SDL_Renderer* renderer, SDL_Texture* cache, int x, int y);
   void drawCircle(SDL_Renderer *renderer, int x, int y, int radius, SDL_Color color);
+  void drawDonut(SDL_Renderer *renderer, int x, int y, int radius, int innerRadius, SDL_Color color);
 }
