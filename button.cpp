@@ -16,11 +16,23 @@ void Button::update(Sint32 mousePos[2], bool mouseClick, int& cursorCounter) {
   else if (newClick && !_clicking) {
     state = ButtonState::Just_Clicked;
     _clicking = true;
+    pos[0] -= 2;
+    pos[1] -= 2;
+    size[0] += 4;
+    size[1] += 4;
+    textOffset[0] += 2;
+    textOffset[1] += 2;
   }
   else if (newClick && _clicking) state = ButtonState::Clicking;
   else if (!newClick && _clicking) {
     state = ButtonState::Just_Released;
     _clicking = false;
+    pos[0] += 2;
+    pos[1] += 2;
+    size[0] -= 4;
+    size[1] -= 4;
+    textOffset[0] -= 2;
+    textOffset[1] -= 2;
   }
   else state = ButtonState::None;
   // set cursor
@@ -53,7 +65,7 @@ void Button::render(SDL_Renderer* renderer) {
   }
   //draw text
   if (textCache) {
-    Util::renderCachedTexture(renderer, textCache, pos[0] + 10, pos[1] + 10);
+    Util::renderCachedTexture(renderer, textCache, pos[0] + textOffset[0], pos[1] + textOffset[1]);
   }
 }
 

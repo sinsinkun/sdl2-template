@@ -24,9 +24,10 @@ namespace Global {
       Sint32 pos[2] = {0, 0};
       Sint32 size[2] = {40, 20};
       int cradius = 8;
-      SDL_Color bgColor = {180, 180, 180, 255};
-      SDL_Color hoverColor = {180, 180, 200, 255};
-      SDL_Color clickColor = {160, 160, 160, 255};
+      int textOffset[2] = {10, 10};
+      SDL_Color bgColor = {220, 220, 220, 255};
+      SDL_Color hoverColor = {200, 200, 255, 255};
+      SDL_Color clickColor = {220, 220, 255, 255};
       SDL_Color textColor = {0, 0, 0, 255};
       std::string text;
       TTF_Font* font = nullptr;
