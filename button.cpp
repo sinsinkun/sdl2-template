@@ -13,9 +13,15 @@ void Button::update(Sint32 mousePos[2], bool mouseClick, int& cursorCounter) {
   bool newClick = hovered && mouseClick;
   // set state
   if (hovered && !newClick && !_clicking) state = ButtonState::Hover;
-  else if (newClick && !_clicking) state = ButtonState::Just_Clicked;
+  else if (newClick && !_clicking) {
+    state = ButtonState::Just_Clicked;
+    _clicking = true;
+  }
   else if (newClick && _clicking) state = ButtonState::Clicking;
-  else if (!newClick && _clicking) state = ButtonState::Just_Released;
+  else if (!newClick && _clicking) {
+    state = ButtonState::Just_Released;
+    _clicking = false;
+  }
   else state = ButtonState::None;
   // set cursor
   if (hovered) cursorCounter++;

@@ -101,6 +101,9 @@ void App::update() {
     btnCache.push_back(btn);
   } else {
     btnCache.at(0).update(mousePos, mouseClicking, _cursorCounter);
+    if (btnCache.at(0).state == ButtonState::Just_Clicked) {
+      std::cout << "Clicked button " << btnCache.at(0).id << std::endl;
+    }
   }
 
   // update cursor state
