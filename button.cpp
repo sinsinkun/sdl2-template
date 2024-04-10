@@ -46,14 +46,20 @@ void Button::render(SDL_Renderer* renderer) {
       break;
   }
   Util::renderRoundedRect(renderer, pos[0], pos[1], size[0], size[1], cradius, color);
+
+  // cache text
+  if (textCache == nullptr && font != nullptr && text.length() > 0) {
+    textCache = Util::createTextCache(renderer, font, text.c_str(), textColor);
+  }
   //draw text
-  if (text.length() > 0 && font != nullptr) {
-    const char* str = text.c_str();
-    Util::renderText(renderer, font, str, pos[0] + 10, pos[1] + 10, textColor);
+  if (textCache) {
+    Util::renderCachedTexture(renderer, textCache, pos[0] + 10, pos[1] + 10);
   }
 }
 
+/// @brief Free resources taken by button
 void Button::destroy() {
+  if (textCache) SDL_DestroyTexture(textCache);
   TTF_CloseFont(font);
 }
 

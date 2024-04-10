@@ -30,6 +30,7 @@ namespace Global {
       SDL_Color textColor = {0, 0, 0, 255};
       std::string text;
       TTF_Font* font = nullptr;
+      SDL_Texture* textCache = nullptr;
       ButtonState state = ButtonState::None;
       // methods
       void update(Sint32 mousePos[2], bool mouseClick, int& cursorCounter);
