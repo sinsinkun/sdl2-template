@@ -31,7 +31,6 @@ void Button::update(Sint32 mousePos[2], bool mouseClick, int& cursorCounter) {
 /// @param renderer 
 void Button::render(SDL_Renderer* renderer) {
   // draw background
-  SDL_Rect rect = {pos[0], pos[1], size[0], size[1]};
   SDL_Color color = bgColor;
   switch (state) {
     case ButtonState::Hover:
@@ -46,8 +45,7 @@ void Button::render(SDL_Renderer* renderer) {
     default:
       break;
   }
-  SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, bgColor.a);
-  SDL_RenderFillRect(renderer, &rect);
+  Util::renderRoundedRect(renderer, pos[0], pos[1], size[0], size[1], cradius, color);
   //draw text
   if (text.length() > 0 && font != nullptr) {
     const char* str = text.c_str();

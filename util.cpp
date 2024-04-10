@@ -86,7 +86,7 @@ void Util::renderCachedTexture(SDL_Renderer* renderer, SDL_Texture* cache, int x
 /// @param y 
 /// @param radius 
 /// @param color 
-void Util::drawCircle(SDL_Renderer *renderer, int x, int y, int radius, SDL_Color color) {
+void Util::renderCircle(SDL_Renderer *renderer, int x, int y, int radius, SDL_Color color) {
   SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
   for (int w = 0; w < radius * 2; w++) {
     for (int h = 0; h < radius * 2; h++) {
@@ -106,7 +106,7 @@ void Util::drawCircle(SDL_Renderer *renderer, int x, int y, int radius, SDL_Colo
 /// @param radius 
 /// @param innerRadius 
 /// @param color 
-void Util::drawDonut(SDL_Renderer *renderer, int x, int y, int radius, int innerRadius, SDL_Color color) {
+void Util::renderDonut(SDL_Renderer *renderer, int x, int y, int radius, int innerRadius, SDL_Color color) {
   SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
   for (int w = 0; w < radius * 2; w++) {
     for (int h = 0; h < radius * 2; h++) {
@@ -123,9 +123,11 @@ void Util::drawDonut(SDL_Renderer *renderer, int x, int y, int radius, int inner
 /// @param renderer 
 /// @param x 
 /// @param y 
+/// @param w
+/// @param h
 /// @param cradius radius of corner
 /// @param color 
-void Util::drawRoundedRect(SDL_Renderer *renderer, int x, int y, int w, int h, int cr, SDL_Color color) {
+void Util::renderRoundedRect(SDL_Renderer *renderer, int x, int y, int w, int h, int cr, SDL_Color color) {
   SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
   // handle radius that's too big
   if (cr > w/2) cr = w/2;

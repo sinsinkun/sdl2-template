@@ -23,6 +23,7 @@ namespace Global {
       int id = -1;
       Sint32 pos[2] = {0, 0};
       Sint32 size[2] = {40, 20};
+      int cradius = 8;
       SDL_Color bgColor = {180, 180, 180, 255};
       SDL_Color hoverColor = {180, 180, 200, 255};
       SDL_Color clickColor = {160, 160, 160, 255};
