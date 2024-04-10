@@ -104,6 +104,11 @@ void App::update() {
     if (btnCache.at(0).state == ButtonState::Just_Clicked) {
       std::cout << "Clicked button " << btnCache.at(0).id << std::endl;
     }
+    if (btnCache.at(0).state == ButtonState::Clicking) {
+      circB = true;
+    } else {
+      circB = false;
+    }
   }
 
   // update cursor state
@@ -143,16 +148,6 @@ void App::render() {
   const int order[] = {0,1,2,0,2,3};
   SDL_RenderGeometry(renderer, nullptr, verts.data(), verts.size(), order, 6);
 
-  // render FPS
-  Uint8 g = SDL_clamp(fps * 4 - 20, 0, 255);
-  Uint8 r = 255 - g;
-  std::string fpsStr = Util::floatToString(fps, 2);
-  std::string fpsTxt = "FPS: ";
-  fpsTxt.append(fpsStr);
-  const char* str = fpsTxt.c_str();
-  const SDL_Color fpsColor = {r, g, 80};
-  Util::renderText(renderer, fontp1, str, 10, 10, fpsColor);
-
   // render cached text
   for (TextureCache tc: textCache) {
     Util::renderCachedTexture(renderer, tc.texture, tc.x, tc.y);
@@ -162,6 +157,20 @@ void App::render() {
   for (Button b: btnCache) {
     b.render(renderer);
   }
+  // draw circle
+  SDL_Color circ = {255, 255, 10};
+  if (circB) circ = {255, 10, 10};
+  Util::drawCircle(renderer, winSize[0] - 80, 80, 30, circ);
+
+  // render FPS
+  Uint8 g = SDL_clamp(fps * 4 - 20, 0, 255);
+  Uint8 r = 255 - g;
+  std::string fpsStr = Util::floatToString(fps, 2);
+  std::string fpsTxt = "FPS: ";
+  fpsTxt.append(fpsStr);
+  const char* str = fpsTxt.c_str();
+  const SDL_Color fpsColor = {r, g, 80};
+  Util::renderText(renderer, fontp1, str, 10, 10, fpsColor);
 
   // -- draw new render --
   SDL_RenderPresent(renderer);

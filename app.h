@@ -36,6 +36,7 @@ namespace Global {
       Uint32 deltaTime = 0; // in ms
       Uint32 elapsedTime = 0; // in ms
       float fps = 0;
+      bool circB = false;
       // asset store
       std::vector<TextureCache> textCache;
       std::vector<Button> btnCache;
