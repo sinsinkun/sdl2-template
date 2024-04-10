@@ -36,6 +36,7 @@ void App::init() {
     std::cout << "Failed to create renderer: " << SDL_GetError() << std::endl;
     exit(1);
   }
+  SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
 
   // initialize TTF
   if (TTF_Init() < 0) {
@@ -83,7 +84,7 @@ void App::update() {
   // create cached text
   if (textCache.size() < 1) {
     std::string txt = "Hello cache";
-    SDL_Color txtc = {200, 200, 240};
+    SDL_Color txtc = {200, 200, 240, 255};
     SDL_Texture* txtcache = Util::createTextCache(renderer, fontp1, txt.c_str(), txtc);
     TextureCache txttc = { winSize[0]/2 - 50, 10, txtcache };
     textCache.push_back(txttc);
@@ -158,9 +159,10 @@ void App::render() {
     b.render(renderer);
   }
   // draw circle
-  SDL_Color circ = {255, 255, 10};
-  if (circB) circ = {255, 10, 10};
+  SDL_Color circ = {255, 255, 10, 255};
+  if (circB) circ = {255, 10, 10, 255};
   Util::drawCircle(renderer, winSize[0] - 80, 80, 30, circ);
+  Util::drawRoundedRect(renderer, 60, 150, 150, 50, 15, circ);
 
   // render FPS
   Uint8 g = SDL_clamp(fps * 4 - 20, 0, 255);

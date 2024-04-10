@@ -11,4 +11,5 @@ namespace Util {
   void renderCachedTexture(SDL_Renderer* renderer, SDL_Texture* cache, int x, int y);
   void drawCircle(SDL_Renderer *renderer, int x, int y, int radius, SDL_Color color);
   void drawDonut(SDL_Renderer *renderer, int x, int y, int radius, int innerRadius, SDL_Color color);
+  void drawRoundedRect(SDL_Renderer *renderer, int x, int y, int w, int h, int cradius, SDL_Color color);
 }

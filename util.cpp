@@ -118,3 +118,44 @@ void Util::drawDonut(SDL_Renderer *renderer, int x, int y, int radius, int inner
     }
   }
 }
+
+/// @brief Draw rectangle with rounded corners
+/// @param renderer 
+/// @param x 
+/// @param y 
+/// @param cradius radius of corner
+/// @param color 
+void Util::drawRoundedRect(SDL_Renderer *renderer, int x, int y, int w, int h, int cr, SDL_Color color) {
+  SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
+  int c1[2] = {cr, cr};
+  int c2[2] = {cr, h-cr};
+  int c3[2] = {w-cr, cr};
+  int c4[2] = {w-cr, h-cr};
+  for (int i = 0; i < w; i++) {
+    for (int j = 0; j < h; j++) {
+      if (i < c1[0] && j < c1[1]) {
+        // render corner 1
+        int di = c1[0] - i;
+        int dj = c1[1] - j;
+        if ((di*di) + (dj*dj) <= (cr*cr)) SDL_RenderDrawPoint(renderer, x+i, y+j);
+      } else if (i < c2[0] && j > c2[1]) {
+        // render corner 2
+        int di = c2[0] - i;
+        int dj = c2[1] - j;
+        if ((di*di) + (dj*dj) <= (cr*cr)) SDL_RenderDrawPoint(renderer, x+i, y+j);
+      } else if (i > c3[0] && j < c3[1]) {
+        // render corner 3
+        int di = c3[0] - i;
+        int dj = c3[1] - j;
+        if ((di*di) + (dj*dj) <= (cr*cr)) SDL_RenderDrawPoint(renderer, x+i, y+j);
+      } else if (i > c4[0] && j > c4[1]) {
+        // render corner 4
+        int di = c4[0] - i;
+        int dj = c4[1] - j;
+        if ((di*di) + (dj*dj) <= (cr*cr)) SDL_RenderDrawPoint(renderer, x+i, y+j);
+      } else {
+        SDL_RenderDrawPoint(renderer, x+i, y+j);
+      }
+    }
+  }
+}
