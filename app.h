@@ -2,6 +2,7 @@
 #include <vector>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
+#include "button.h"
 
 namespace Global {
   // -- Constants --
@@ -24,6 +25,7 @@ namespace Global {
       SDL_Renderer* renderer;
       SDL_Window* window;
       TTF_Font* fontp1;
+      SDL_Cursor* cursor;
       // custom global states
       bool running = true;
       Uint8 bgColor[3] = {20, 20, 30};
@@ -36,12 +38,16 @@ namespace Global {
       float fps = 0;
       // asset store
       std::vector<TextureCache> textCache;
+      std::vector<Button> btnCache;
       // systems
       void init();
+      void preupdate();
       void update();
       void render();
       void cleanup();
     private:
+      // state counter for setting cursor
+      int _cursorCounter = 0;
       // timer helpers
       Uint8 _fpsSkip = 0;
       Uint32 _alphaTime = 0;

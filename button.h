@@ -31,7 +31,7 @@ namespace Global {
       TTF_Font* font = nullptr;
       ButtonState state = ButtonState::None;
       // methods
-      void update(Sint32 mousePos[2], bool mouseClick);
+      void update(Sint32 mousePos[2], bool mouseClick, int& cursorCounter);
       void render(SDL_Renderer* renderer);
       void destroy();
     private:

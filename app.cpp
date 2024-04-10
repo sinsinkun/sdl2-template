@@ -27,6 +27,7 @@ void App::init() {
 
   SDL_SetWindowMinimumSize(window, WIN_MIN_W, WIN_MIN_H);
   SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "linear");
+  SDL_SetHint(SDL_HINT_RENDER_VSYNC, "1");
 
   // initialize renderer
   int renderFlags = SDL_RENDERER_ACCELERATED;
@@ -46,21 +47,40 @@ void App::init() {
     std::cout << "Failed to load font: " << SDL_GetError() << std::endl;
   }
   TTF_SetFontStyle(fontp1, TTF_STYLE_NORMAL);
+
+  // initialize cursor
+  SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_ARROW);
+  SDL_SetCursor(cursor);
 }
 
 /// @brief Free resources on exit
 void App::cleanup() {
-  std::cout << "Closing program" << std::endl;
+  std::cout << "Closing program (lifetime: " << (float)elapsedTime/1000 << "s)" << std::endl;
   // free cache
   for (TextureCache tc: textCache) {
     SDL_DestroyTexture(tc.texture);
   }
+  for (Button b: btnCache) {
+    b.destroy();
+  }
   // free systems
   TTF_CloseFont(fontp1);
   TTF_Quit();
+  SDL_FreeCursor(cursor);
   SDL_DestroyRenderer(renderer);
   SDL_DestroyWindow(window);
   SDL_Quit();
+}
+
+/// @brief Clean up existing resources and update internal states before update
+void App::preupdate() {
+  // -- clear old render --
+  SDL_SetRenderDrawColor(renderer, bgColor[0], bgColor[1], bgColor[2], 255);
+  SDL_RenderClear(renderer);
+  // -- update internal states --
+  _handleInputs();
+  _updateTime();
+  _cursorCounter = 0;
 }
 
 /// @brief Update app state
@@ -68,6 +88,7 @@ void App::update() {
   // -- update internal states --
   _handleInputs();
   _updateTime();
+  _cursorCounter = 0;
   // -- logic updates --
 
   // create cached text
@@ -75,9 +96,29 @@ void App::update() {
     std::string txt = "Hello cache";
     SDL_Color txtc = {200, 200, 240};
     SDL_Texture* txtcache = Util::createTextCache(renderer, fontp1, txt.c_str(), txtc);
-    TextureCache txttc = { 10, winSize[1] - 30, txtcache };
+    TextureCache txttc = { winSize[0]/2 - 50, 10, txtcache };
     textCache.push_back(txttc);
   }
+
+  // create button or update
+  if (btnCache.size() < 1) {
+    TTF_Font* btnf = TTF_OpenFont("assets/roboto.ttf", 18);
+    Global::Button btn{ 1, "Button Test" };
+    btn.font = btnf;
+    btn.pos[0] = 10;
+    btn.pos[1] = winSize[1] - 50;
+    btn.size[0] = 110;
+    btn.size[1] = 40;
+    btnCache.push_back(btn);
+  } else {
+    btnCache.at(0).update(mousePos, mouseClicking, _cursorCounter);
+  }
+
+  // update cursor state
+  SDL_FreeCursor(cursor);
+  if (_cursorCounter > 0) cursor = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_HAND);
+  else cursor = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_ARROW);
+  SDL_SetCursor(cursor);
 }
 
 /// @brief Draw to window
@@ -121,6 +162,11 @@ void App::render() {
   // render cached text
   for (TextureCache tc: textCache) {
     Util::renderCachedTexture(renderer, tc.texture, tc.x, tc.y);
+  }
+
+  // render btns
+  for (Button b: btnCache) {
+    b.render(renderer);
   }
 
   // -- draw new render --
@@ -240,6 +286,15 @@ void App::_handleWindowEvent(SDL_WindowEvent& win) {
     case SDL_WINDOWEVENT_SIZE_CHANGED:
       winSize[0] = win.data1;
       winSize[1] = win.data2;
+      // clear cache
+      for (TextureCache tc: textCache) {
+        SDL_DestroyTexture(tc.texture);
+      }
+      textCache.pop_back();
+      for (Button b: btnCache) {
+        b.destroy();
+      }
+      btnCache.pop_back();
       break;
     case SDL_WINDOWEVENT_FOCUS_LOST:
       winFocus = false;

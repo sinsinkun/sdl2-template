@@ -8,7 +8,7 @@ using namespace Global;
 /// @brief Update button state
 /// @param mousePos 
 /// @param mouseClick 
-void Button::update(Sint32 mousePos[2], bool mouseClick) {
+void Button::update(Sint32 mousePos[2], bool mouseClick, int& cursorCounter) {
   bool hovered = _isHovered(mousePos);
   bool newClick = hovered && mouseClick;
   // set state
@@ -17,6 +17,8 @@ void Button::update(Sint32 mousePos[2], bool mouseClick) {
   else if (newClick && _clicking) state = ButtonState::Clicking;
   else if (!newClick && _clicking) state = ButtonState::Just_Released;
   else state = ButtonState::None;
+  // set cursor
+  if (hovered) cursorCounter++;
 }
 
 /// @brief Render button to renderer
