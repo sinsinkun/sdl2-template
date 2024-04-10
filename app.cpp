@@ -72,17 +72,6 @@ void App::cleanup() {
   SDL_Quit();
 }
 
-/// @brief Clean up existing resources and update internal states before update
-void App::preupdate() {
-  // -- clear old render --
-  SDL_SetRenderDrawColor(renderer, bgColor[0], bgColor[1], bgColor[2], 255);
-  SDL_RenderClear(renderer);
-  // -- update internal states --
-  _handleInputs();
-  _updateTime();
-  _cursorCounter = 0;
-}
-
 /// @brief Update app state
 void App::update() {
   // -- update internal states --

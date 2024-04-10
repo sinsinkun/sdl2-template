@@ -41,7 +41,6 @@ namespace Global {
       std::vector<Button> btnCache;
       // systems
       void init();
-      void preupdate();
       void update();
       void render();
       void cleanup();
