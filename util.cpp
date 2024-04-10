@@ -99,6 +99,29 @@ void Util::renderCircle(SDL_Renderer *renderer, int x, int y, int radius, SDL_Co
   }
 }
 
+/// @brief Draw circle using midpoint circle algorithm (4x faster)
+/// @param renderer 
+/// @param x 
+/// @param y 
+/// @param r 
+/// @param color 
+void Util::renderCircleFast(SDL_Renderer* renderer, int x, int y, int r, SDL_Color color) {
+  SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
+  int t1 = r / 16, dx = r, dy = 0;
+  while (dx > dy) {
+    SDL_RenderDrawLine(renderer, x + dx, y + dy, x - dx, y + dy);
+    SDL_RenderDrawLine(renderer, x + dx, y - dy, x - dx, y - dy);
+    SDL_RenderDrawLine(renderer, x + dy, y + dx, x - dy, y + dx);
+    SDL_RenderDrawLine(renderer, x + dy, y - dx, x - dy, y - dx);
+    dy++;
+    t1 = t1 + dy;
+    if (t1 - dx  >= 0) {
+      t1 = t1 - dx;
+      dx = dx - 1;
+    }
+  }
+}
+
 /// @brief Draw donut
 /// @param renderer 
 /// @param x 

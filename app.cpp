@@ -161,7 +161,7 @@ void App::render() {
   // draw circle
   SDL_Color circ = {255, 255, 10, 255};
   if (circB) circ = {255, 10, 10, 255};
-  Util::renderCircle(renderer, winSize[0] - 80, 80, 30, circ);
+  Util::renderCircleFast(renderer, winSize[0] - 80, 80, 30, circ);
   Util::renderRoundedRect(renderer, 60, 260, 150, 50, 20, circ);
 
   // render FPS
