@@ -104,10 +104,12 @@ void App::update() {
   }
 
   // update cursor state
+  SDL_Cursor* tempCursor;
+  if (_cursorCounter > 0) tempCursor = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_HAND);
+  else tempCursor = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_ARROW);
+  SDL_SetCursor(tempCursor);
   SDL_FreeCursor(cursor);
-  if (_cursorCounter > 0) cursor = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_HAND);
-  else cursor = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_ARROW);
-  SDL_SetCursor(cursor);
+  cursor = tempCursor;
 }
 
 /// @brief Draw to window
