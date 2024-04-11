@@ -22,7 +22,7 @@ namespace Global {
       // state
       int id = -1;
       Sint32 pos[2] = {0, 0};
-      Sint32 size[2] = {40, 20};
+      Sint32 size[2] = {110, 40};
       int cradius = 8;
       int textOffset[2] = {10, 10};
       SDL_Color bgColor = {220, 220, 220, 255};

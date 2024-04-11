@@ -24,7 +24,10 @@ namespace Global {
       // SDL stuff
       SDL_Renderer* renderer;
       SDL_Window* window;
+      TTF_Font* fonth1;
+      TTF_Font* fonth2;
       TTF_Font* fontp1;
+      TTF_Font* fontp2;
       SDL_Cursor* cursor;
       // custom global states
       bool running = true;

@@ -43,11 +43,11 @@ void App::init() {
     std::cout << "Failed to load TTF library: " << SDL_GetError() << std::endl;
     exit(1);
   }
+  fonth1 = TTF_OpenFont("assets/roboto.ttf", 24);
+  fonth2 = TTF_OpenFont("assets/roboto.ttf", 20);
   fontp1 = TTF_OpenFont("assets/roboto.ttf", 16);
-  if (fontp1 == nullptr) {
-    std::cout << "Failed to load font: " << SDL_GetError() << std::endl;
-  }
-  TTF_SetFontStyle(fontp1, TTF_STYLE_NORMAL);
+  fontp2 = TTF_OpenFont("assets/roboto.ttf", 12);
+  if (fonth1 == nullptr) std::cout << "Failed to load font: " << SDL_GetError() << std::endl;
 
   // initialize cursor
   SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_ARROW);
@@ -65,7 +65,10 @@ void App::cleanup() {
     b.destroy();
   }
   // free systems
+  TTF_CloseFont(fonth1);
+  TTF_CloseFont(fonth2);
   TTF_CloseFont(fontp1);
+  TTF_CloseFont(fontp2);
   TTF_Quit();
   SDL_FreeCursor(cursor);
   SDL_DestroyRenderer(renderer);
@@ -83,10 +86,10 @@ void App::update() {
 
   // create cached text
   if (textCache.size() < 1) {
-    std::string txt = "Hello cache";
-    SDL_Color txtc = {200, 200, 240, 255};
-    SDL_Texture* txtcache = Util::createTextCache(renderer, fontp1, txt.c_str(), txtc);
-    TextureCache txttc = { winSize[0]/2 - 50, 10, txtcache };
+    std::string txt = "Hello World";
+    SDL_Color txtc = {20, 20, 60, 255};
+    SDL_Texture* txtcache = Util::createTextCache(renderer, fonth1, txt.c_str(), txtc);
+    TextureCache txttc = { winSize[0]/2 - 62, 5, txtcache };
     textCache.push_back(txttc);
   }
 
@@ -97,14 +100,9 @@ void App::update() {
     btn.font = btnf;
     btn.pos[0] = 10;
     btn.pos[1] = winSize[1] - 50;
-    btn.size[0] = 110;
-    btn.size[1] = 40;
     btnCache.push_back(btn);
   } else {
     btnCache.at(0).update(mousePos, mouseClicking, _cursorCounter);
-    if (btnCache.at(0).state == ButtonState::Just_Clicked) {
-      std::cout << "Clicked button " << btnCache.at(0).id << std::endl;
-    }
     if (btnCache.at(0).state == ButtonState::Clicking) {
       circB = true;
     } else {
@@ -129,22 +127,22 @@ void App::render() {
   // -- create new render --
 
   // draw rectangles
-  SDL_Rect rect1 = {winSize[0]/2 - 40, winSize[1]/2 - 40, 50, 50};
-  SDL_Rect rect2 = {winSize[0]/2 - 25, winSize[1]/2 - 25, 50, 50};
-  SDL_Rect rect3 = {winSize[0]/2 - 10, winSize[1]/2 - 10, 50, 50};
+  SDL_Rect rect1 = {10, 40, 50, 50};
   SDL_SetRenderDrawColor(renderer, 180, 180, 255, 255);
   SDL_RenderFillRect(renderer, &rect1);
+  SDL_Rect rect2 = {25, 55, 50, 50};
   SDL_SetRenderDrawColor(renderer, 200, 200, 255, 255);
   SDL_RenderFillRect(renderer, &rect2);
+  SDL_Rect rect3 = {40, 70, 50, 50};
   SDL_SetRenderDrawColor(renderer, 220, 220, 255, 255);
   SDL_RenderFillRect(renderer, &rect3);
 
   // draw polygon
   const std::vector<SDL_Vertex> verts = {
-    { SDL_FPoint{ 100, 100 }, SDL_Color{ 255, 0, 0, 255 }, SDL_FPoint{ 0 } },
-    { SDL_FPoint{ 60, 250 }, SDL_Color{ 0, 0, 255, 255 }, SDL_FPoint{ 0 } },
-    { SDL_FPoint{ 290, 250 }, SDL_Color{ 0, 255, 0, 255 }, SDL_FPoint{ 0 } },
-    { SDL_FPoint{ 250, 100 }, SDL_Color{ 255, 255, 0, 255 }, SDL_FPoint{ 0 } },
+    { SDL_FPoint{ (float)winSize[0]/2 - 100, 0 }, SDL_Color{ 255, 110, 255, 255 }, SDL_FPoint{ 0 } },
+    { SDL_FPoint{ (float)winSize[0]/2 - 60, 40 }, SDL_Color{ 255, 220, 220, 255 }, SDL_FPoint{ 0 } },
+    { SDL_FPoint{ (float)winSize[0]/2 + 60, 40 }, SDL_Color{ 255, 220, 220, 255 }, SDL_FPoint{ 0 } },
+    { SDL_FPoint{ (float)winSize[0]/2 + 100, 0 }, SDL_Color{ 255, 255, 110, 255 }, SDL_FPoint{ 0 } },
   };
   const int order[] = {0,1,2,0,2,3};
   SDL_RenderGeometry(renderer, nullptr, verts.data(), verts.size(), order, 6);
@@ -161,8 +159,7 @@ void App::render() {
   // draw circle
   SDL_Color circ = {255, 255, 10, 255};
   if (circB) circ = {255, 10, 10, 255};
-  Util::renderCircleFast(renderer, winSize[0] - 80, 80, 30, circ);
-  Util::renderRoundedRect(renderer, 60, 260, 150, 50, 20, circ);
+  Util::renderCircleFast(renderer, winSize[0]/2, 100, 30, circ);
 
   // render FPS
   Uint8 g = SDL_clamp(fps * 4 - 20, 0, 255);
